@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Géolocalisation</string>
+    <string name="refreshButton">REFRESH GPS</string>
 </resources>

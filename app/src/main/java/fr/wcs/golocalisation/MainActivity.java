@@ -11,21 +11,50 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
 
-    LocationManager mLocationManager = null;
+   private LocationManager mLocationManager = null;
+   private LocationListener locationListener =  null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        final Button refreshButton = (Button) findViewById(R.id.refreshButton);
         //initLocation();
-        checkPermission();
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // RIen a doutre car je veux le faire quand j'utilise mon button
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(mLocationManager != null && locationListener != null) {
+            mLocationManager.removeUpdates(locationListener);
+        }
+
+
+
+    }
+
+    public void refreshButton(View view){
+
+
+        checkPermission();
+      //  mLocationManager.removeUpdates(locationListener);
+
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -78,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
             initLocation();
 
+
         }
     }
 
@@ -85,12 +115,16 @@ public class MainActivity extends AppCompatActivity {
     public void initLocation(){
 
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 // TODO : effectuer une action ici !
 
-                Toast.makeText(MainActivity.this, location.toString(), Toast.LENGTH_SHORT).show();
+               // Toast.makeText(MainActivity.this, location.toString(), Toast.LENGTH_SHORT).show();
+               // mLocationManager.removeUpdates(locationListener);
+              //  mLocationManager = null;
+                final TextView tvLocalisation = (TextView) findViewById(R.id.tvLocalisation) ;
+                tvLocalisation.setText(location.toString());
+
                 
             }
 
@@ -102,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
 
     }
 }
